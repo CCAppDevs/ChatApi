@@ -9,6 +9,7 @@ var data = [
 
 /* GET all comments listing. */
 router.get('/:channel/', function(req, res, next) {
+  console.log("tech");
   res.send(data.filter((element) => { return element.channel == req.params.channel }));
 });
 
@@ -29,17 +30,35 @@ router.put('/:channel/', function(req, res, next) {
   };
 
   data.push(newMessage);
+  res.statusCode = 201;
   res.send(data.filter((element) => { return element.channel == req.params.channel }));
 });
 
 // updated a message (post)
 router.post('/:id', function(req, res, next) {
-  res.send('updated a message by id');
+  var message = data.filter((element) => { return element.id == req.params.id })[0];
+  var index = data.findIndex((element) => { return element == message });
+
+  if (message != undefined) {
+    message.user = req.body.user;
+    message.id = req.params.id;
+    message.channel = req.body.channel;
+    message.message = req.body.message;
+
+    data[index] = message;
+  }
+
+  res.send(message);
 });
 
 // delete a message
 router.delete('/:id', function(req, res, next) {
-  res.send('deleted a message by id');
+  var message = data.filter((element) => { return element.id == req.params.id })[0];
+
+  // delete the item!
+  data = data.filter((element) => { return element.id != req.params.id })
+
+  res.send(message);
 });
 
 
